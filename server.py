@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 # Copyright 2013 Abram Hindle
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
 
 
 import flask
-from flask import Flask, request
+from flask import Flask, request, redirect, jsonify, Response
 import json
 app = Flask(__name__)
 app.debug = True
@@ -36,7 +36,7 @@ app.debug = True
 class World:
     def __init__(self):
         self.clear()
-        
+
     def update(self, entity, key, value):
         entry = self.space.get(entity,dict())
         entry[key] = value
@@ -50,14 +50,14 @@ class World:
 
     def get(self, entity):
         return self.space.get(entity,dict())
-    
+
     def world(self):
         return self.space
 
 # you can test your webservice from the commandline
-# curl -v   -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
+# curl -v   -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}'
 
-myWorld = World()          
+myWorld = World()
 
 # I give this to you, this is how you get the raw body/data portion of a post in flask
 # this should come with flask but whatever, it's not my project.
@@ -74,27 +74,59 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-    return None
+    '''https://pythonbasics.org/flask-redirect-and-errors/'''
+    return redirect(' /static/index.html', code=301)
 
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
-    return None
 
-@app.route("/world", methods=['POST','GET'])    
+    "Try to update or set the entity otherwise it is a 500 error"
+    try:
+        # Get the raw body/data of a post
+        raw_data = flask_post_json()
+
+        if (request.method == 'POST'):
+            myWorld.set(entity, raw_data)
+        elif (request.method == 'PUT'):
+            for key,value in raw_data.items():
+                myWorld.update(entity, key, value)
+
+        # Serializes data to JSON and wraps it in a Response object
+        # https://www.geeksforgeeks.org/use-jsonify-instead-of-json-dumps-in-flask/
+        return jsonify(myWorld.get(entity))
+    except Exception as e:
+        return Response(status=500, response=json.dumps({'Error': str(e)}))
+
+@app.route("/world", methods=['POST','GET'])
 def world():
     '''you should probably return the world here'''
-    return None
+    return jsonify(myWorld.world())
 
-@app.route("/entity/<entity>")    
+@app.route("/entity/<entity>")
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-    return None
+
+    # Try to return the representation of the entity otherwise it is a 500 error
+    try:
+        rep_entity = myWorld.get(entity)
+        return jsonify(rep_entity)
+    except Exception as e:
+        return Response(status=500, response=json.dumps({'Error': str(e)}))
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
-    return None
+
+    # Try to clear the world otherwise it is a 500 error
+    try:
+        if (request.method == 'POST'):
+            myWorld.clear()
+            return jsonify(myWorld.world())
+        elif (request.method == 'GET'):
+            return jsonify(myWorld.world())
+    except Exception as e:
+        return Response(status=500, response=json.dumps({'Error': str(e)}))
 
 if __name__ == "__main__":
     app.run()
