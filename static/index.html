@@ -43,7 +43,8 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
                     // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
 
                     // Parses a JSON object to create a JS object
-                    var data = JSON.parse(xhr.responseText);
+                    // https://www.w3schools.com/js/js_json_parse.asp
+                    const data = JSON.parse(xhr.responseText);
                     callback(data);
                 }
             }
@@ -153,7 +154,7 @@ function addEntity(entity, data) {
     world[entity] = data;
     drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just  modified!
-
+    
 }
 
 var counter = 0;
