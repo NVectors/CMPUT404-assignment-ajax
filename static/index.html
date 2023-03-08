@@ -152,9 +152,10 @@ function getPosition(e) {
 
 function addEntity(entity, data) {
     world[entity] = data;
-    drawNextFrame(); // (but should we?)
+    //drawNextFrame(); // (but should we?)
     //XXX: Send a XHTML Request that updates the entity you just  modified!
-    
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+    sendJSONXMLHTTPRequest('/entity/' + entity, data, response => {drawNextFrame();});
 }
 
 var counter = 0;
@@ -278,7 +279,15 @@ mouse.mousedraggers.push(function(x,y,clicked,e) {
 
 function update() {
     //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
+
+    // data will be the world object returned as a JSON parse object
+    const callback = function (data){
+        world = data;
+        drawNextFrame();
+    }
+    sendJSONXMLHTTPRequest('/world', null, callback);
     drawFrame();
+
 }
 
 // 30 frames per second
