@@ -68,7 +68,7 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
     xhr.send(JSON.stringify(objects));
 }
 
-function sendJSONXMLHTTPGETRequest(url, objects, callback) {
+function sendJSONXMLHTTPGETRequest(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState==4) {
@@ -100,8 +100,7 @@ function sendJSONXMLHTTPGETRequest(url, objects, callback) {
     xhr.setRequestHeader("Content-Type", "application/json");
     // Set the Accept Header
     xhr.setRequestHeader("Accept", "application/json");
-    // Convert body from JS to JSON object to send HTTP Request
-    xhr.send(JSON.stringify(objects));
+    xhr.send();
 }
 
 world = {};
@@ -326,7 +325,7 @@ function update() {
         world = data;
         drawNextFrame();
     }
-    sendJSONXMLHTTPGETRequest('/world', null, callback);
+    sendJSONXMLHTTPGETRequest('/world', callback);
     drawFrame();
 }
 
