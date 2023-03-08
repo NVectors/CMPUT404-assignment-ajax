@@ -75,7 +75,7 @@ world = {};
 function drawCircle(context,entity) {
     with(context) {
         beginPath();
-        lineWidth = 3;
+        lineWidth = 4;  // 3 to 4
         var x = entity["x"];
         var y = entity["y"];
         //moveTo(x,y);
@@ -263,17 +263,21 @@ mouse = (function() {
 
 // Add the application specific mouse listeners!
 //XXX: TODO Make these prettier!
+// Neon colour, swapped the blue and green and made circles bigger
+
 mouse.mousedowners.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
+    // This is neon green now
+    addEntityWithoutName({'x':x,'y':y,'colour':'#00FF00','radius':50});
 });
 
 mouse.mouseuppers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'red'});
+    // Neon red
+    addEntityWithoutName({'x':x,'y':y,'colour':'#FF0000','radius':100});
 });
 
 mouse.mousedraggers.push(function(x,y,clicked,e) {
-    addEntityWithoutName({'x':x,'y':y,'colour':'green',
-                          'radius':10});
+    // This is neon blue now
+    addEntityWithoutName({'x':x,'y':y,'colour':'#00FFFF','radius':10});
 });
 
 
