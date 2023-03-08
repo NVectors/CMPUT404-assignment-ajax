@@ -68,6 +68,41 @@ function sendJSONXMLHTTPRequest(url, objects, callback) {
     xhr.send(JSON.stringify(objects));
 }
 
+function sendJSONXMLHTTPGETRequest(url, objects, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState==4) {
+            try {
+                if (xhr.status==200) {
+                    //XXX: parse some JSON from the request!
+                    //XXX: Pass the data to the callback!
+                    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
+
+                    // Parses a JSON object to create a JS object
+                    // https://www.w3schools.com/js/js_json_parse.asp
+                    const data = JSON.parse(xhr.responseText);
+                    callback(data);
+                }
+            }
+            catch(e) {
+                alert('Error: ' + e.name);
+            }
+        }
+    };
+    //XXX: GET to a URL
+    //XXX: set the mimetype and the accept headers!
+    // Remember to use application/json !
+    // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/send
+
+    // GET request to the URL asynchronously
+    xhr.open('GET', url, true);
+    // Set the MIME (content) type Header
+    xhr.setRequestHeader("Content-Type", "application/json");
+    // Set the Accept Header
+    xhr.setRequestHeader("Accept", "application/json");
+    // Convert body from JS to JSON object to send HTTP Request
+    xhr.send(JSON.stringify(objects));
+}
 
 world = {};
 
@@ -291,7 +326,7 @@ function update() {
         world = data;
         drawNextFrame();
     }
-    sendJSONXMLHTTPRequest('/world', null, callback);
+    sendJSONXMLHTTPGETRequest('/world', null, callback);
     drawFrame();
 }
 
