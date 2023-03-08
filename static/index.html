@@ -155,8 +155,9 @@ function addEntity(entity, data) {
     //drawNextFrame(); // (but should we?)
 
     //XXX: Send a XHTML Request that updates the entity you just  modified!
-    //No callbacks
-    sendJSONXMLHTTPRequest('/entity/' + entity, data, null);
+    //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+    //No callback, not drawing in this function
+    sendJSONXMLHTTPRequest('/entity/' + entity, data, response => {});
 }
 
 var counter = 0;
